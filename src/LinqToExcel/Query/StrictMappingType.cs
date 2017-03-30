@@ -1,8 +1,11 @@
 ﻿namespace LinqToExcel.Query
 {
+    using System;
+
     /// <summary>
     /// Class property and worksheet mapping enforcemment type.
     /// </summary>
+    [Serializable]
     public enum StrictMappingType
     {
         /// <summary>

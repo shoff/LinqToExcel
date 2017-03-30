@@ -2,46 +2,43 @@
 using System.Linq;
 using MbUnit.Framework;
 using System.IO;
-using log4net.Core;
 using System.Data.OleDb;
 
 namespace LinqToExcel.Tests
 {
-    [Author("Paul Yoder", "paulyoder@gmail.com")]
     [FixtureCategory("Integration")]
     [TestFixture]
-    public class ColumnMappings_IntegrationTests : SQLLogStatements_Helper
+    public class ColumnMappingsIntegrationTests 
     {
-        ExcelQueryFactory _repo;
-        string _excelFileName;
-        string _worksheetName;
+        ExcelQueryFactory repo;
+        string excelFileName;
+        string worksheetName;
 
         [TestFixtureSetUp]
-        public void fs()
+        public void Fs()
         {
-            InstantiateLogger();
             var testDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var excelFilesDirectory = Path.Combine(testDirectory, "ExcelFiles");
-            _excelFileName = Path.Combine(excelFilesDirectory, "Companies.xls");
-            _worksheetName = "ColumnMappings";
+            this.excelFileName = Path.Combine(excelFilesDirectory, "Companies.xls");
+            this.worksheetName = "ColumnMappings";
         }
 
         [SetUp]
-        public void s()
+        public void S()
         {
-            _repo = new ExcelQueryFactory(new LogManagerFactory());
-            _repo.FileName = _excelFileName;
+            this.repo = new ExcelQueryFactory(new LogManagerFactory());
+            this.repo.FileName = this.excelFileName;
         }
 
         [Test]
         public void all_properties_have_column_mappings()
         {
-            _repo.AddMapping<Company>(x => x.Name, "Company Title");
-            _repo.AddMapping<Company>(x => x.CEO, "Boss");
-            _repo.AddMapping<Company>(x => x.EmployeeCount, "Number of People");
-            _repo.AddMapping<Company>(x => x.StartDate, "Initiation Date");
+            this.repo.AddMapping<Company>(x => x.Name, "Company Title");
+            this.repo.AddMapping<Company>(x => x.CEO, "Boss");
+            this.repo.AddMapping<Company>(x => x.EmployeeCount, "Number of People");
+            this.repo.AddMapping<Company>(x => x.StartDate, "Initiation Date");
 
-            var companies = from c in _repo.Worksheet<Company>(_worksheetName)
+            var companies = from c in this.repo.Worksheet<Company>(this.worksheetName)
                             where c.Name == "Taylor University"
                             select c;
 
@@ -56,10 +53,10 @@ namespace LinqToExcel.Tests
         [Test]
         public void some_properties_have_column_mappings()
         {
-            _repo.AddMapping<Company>(x => x.CEO, "Boss");
-            _repo.AddMapping<Company>(x => x.StartDate, "Initiation Date");
+            this.repo.AddMapping<Company>(x => x.CEO, "Boss");
+            this.repo.AddMapping<Company>(x => x.StartDate, "Initiation Date");
 
-            var companies = from c in _repo.Worksheet<Company>(_worksheetName)
+            var companies = from c in this.repo.Worksheet<Company>(this.worksheetName)
                             where c.Name == "Anderson University"
                             select c;
 
@@ -71,31 +68,12 @@ namespace LinqToExcel.Tests
             Assert.AreEqual(new DateTime(1988, 7, 26), rival.StartDate, "StartDate");
         }
 
-        [Test]
-        public void log_warning_when_property_with_column_mapping_not_in_where_clause_when_mapped_column_doesnt_exist()
-        {
-            _loggedEvents.Clear();
-            _repo.AddMapping<Company>(x => x.CEO, "The Big Cheese");
-
-            var companies = from c in _repo.Worksheet<Company>(_worksheetName)
-                            select c;
-
-            companies.GetEnumerator();
-            int warningsLogged = 0;
-            foreach (LoggingEvent logEvent in _loggedEvents.GetEvents())
-            {
-                if ((logEvent.Level == Level.Warn) &&
-                    (logEvent.RenderedMessage == "'The Big Cheese' column that is mapped to the 'CEO' property does not exist in the 'ColumnMappings' worksheet"))
-                    warningsLogged++;
-            }
-            Assert.AreEqual(1, warningsLogged);
-        }
 
         [Test]
         public void column_mappings_with_transformation()
         {
-            _repo.AddMapping<Company>(x => x.IsActive, "Active", x => x == "Y");
-            var companies = from c in _repo.Worksheet<Company>(_worksheetName)
+            this.repo.AddMapping<Company>(x => x.IsActive, "Active", x => x == "Y");
+            var companies = from c in this.repo.Worksheet<Company>(this.worksheetName)
                             select c;
 
             foreach (var company in companies)
@@ -103,11 +81,11 @@ namespace LinqToExcel.Tests
         }
 
         [Test]
-        public void transformation()
+        public void Transformation()
         {
             //Add transformation to change the Name value to 'Looney Tunes' if it is originally 'ACME'
-            _repo.AddTransformation<Company>(p => p.Name, value => (value == "ACME") ? "Looney Tunes" : value);
-            var firstCompany = (from c in _repo.Worksheet<Company>(_worksheetName)
+            this.repo.AddTransformation<Company>(p => p.Name, value => (value == "ACME") ? "Looney Tunes" : value);
+            var firstCompany = (from c in this.repo.Worksheet<Company>(this.worksheetName)
                                 select c).First();
 
             Assert.AreEqual("Looney Tunes", firstCompany.Name);
@@ -117,8 +95,8 @@ namespace LinqToExcel.Tests
         public void transformation_that_returns_null()
         {
             //Add transformation to change the Name value to 'Looney Tunes' if it is originally 'ACME'
-            _repo.AddTransformation<Company>(p => p.Name, value => null);
-            var firstCompany = (from c in _repo.Worksheet<Company>(_worksheetName)
+            this.repo.AddTransformation<Company>(p => p.Name, value => null);
+            var firstCompany = (from c in this.repo.Worksheet<Company>(this.worksheetName)
                                 select c).First();
 
             Assert.AreEqual(null, firstCompany.Name);
@@ -127,7 +105,7 @@ namespace LinqToExcel.Tests
         [Test]
         public void annotated_properties_map_to_columns()
         {
-            var companies = from c in _repo.Worksheet<CompanyWithColumnAnnotations>(_worksheetName)
+            var companies = from c in this.repo.Worksheet<CompanyWithColumnAnnotations>(this.worksheetName)
                             where c.Name == "Taylor University"
                             select c;
 

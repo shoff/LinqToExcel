@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LinqToExcel
+﻿namespace LinqToExcel.Domain
 {
+    using System.Collections.Generic;
+
     public class RowNoHeader : List<Cell>
     {
         /// <param name="cells">Cells contained within the row</param>

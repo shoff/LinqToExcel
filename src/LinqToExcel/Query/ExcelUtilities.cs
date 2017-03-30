@@ -20,52 +20,50 @@ namespace LinqToExcel.Query
             if (fileNameLower.EndsWith("xlsx") ||
                 fileNameLower.EndsWith("xlsm"))
             {
-                connString = string.Format(
-                    @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0 Xml;HDR=YES;IMEX=1""",
-                    args.FileName);
+                connString =
+                    $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={args.FileName};Extended Properties=""Excel 12.0 Xml;HDR=YES;IMEX=1""";
             }
             else if (fileNameLower.EndsWith("xlsb"))
             {
-                connString = string.Format(
-                    @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""",
-                    args.FileName);
+                connString =
+                    $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={args.FileName};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""";
             }
             else if (fileNameLower.EndsWith("csv"))
             {
                 if (args.DatabaseEngine == DatabaseEngine.Jet)
                 {
-                    connString = string.Format(
-                        @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties=""text;HDR=YES;FMT=Delimited;IMEX=1""",
-                        Path.GetDirectoryName(args.FileName));
+                    connString =
+                        $@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={Path.GetDirectoryName(args.FileName)};Extended Properties=""text;HDR=YES;FMT=Delimited;IMEX=1""";
                 }
                 else
                 {
-                    connString = string.Format(
-                        @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""text;Excel 12.0;HDR=YES;IMEX=1""",
-                        Path.GetDirectoryName(args.FileName));
+                    connString =
+                        $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Path.GetDirectoryName(args.FileName)};Extended Properties=""text;Excel 12.0;HDR=YES;IMEX=1""";
                 }
             }
             else
             {
                 if (args.DatabaseEngine == DatabaseEngine.Jet)
                 {
-                    connString = string.Format(
-                        @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties=""Excel 8.0;HDR=YES;IMEX=1""",
-                        args.FileName);
+                    connString =
+                        $@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={args.FileName};Extended Properties=""Excel 8.0;HDR=YES;IMEX=1""";
                 }
                 else
                 {
-                    connString = string.Format(
-                        @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""",
-                        args.FileName);
+                    connString =
+                        $@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={args.FileName};Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""";
                 }
             }
 
             if (args.NoHeader)
+            {
                 connString = connString.Replace("HDR=YES", "HDR=NO");
+            }
 
             if (args.ReadOnly)
+            {
                 connString = connString.Replace("IMEX=1", "IMEX=1;READONLY=TRUE");
+            }
 
             return connString;
         }
@@ -86,10 +84,7 @@ namespace LinqToExcel.Query
 		{
 			if (args.UsePersistentConnection)
 			{
-                if (args.PersistentConnection == null)
-                    args.PersistentConnection = new OleDbConnection(GetConnectionString(args));
-
-				return args.PersistentConnection;
+			    return args.PersistentConnection ?? (args.PersistentConnection = new OleDbConnection(GetConnectionString(args)));
 			}
 
             return new OleDbConnection(GetConnectionString(args));
@@ -103,28 +98,35 @@ namespace LinqToExcel.Query
             try
             {
                 if (conn.State == ConnectionState.Closed)
+                {
                     conn.Open();
+                }
 
                 var excelTables = conn.GetOleDbSchemaTable(
                     OleDbSchemaGuid.Tables,
-                    new Object[] { null, null, null, "TABLE" });
+                    new object[] { null, null, null, "TABLE" });
 
-                worksheetNames.AddRange(
-                    from DataRow row in excelTables.Rows
-                    where IsTable(row)
-                    let tableName = row["TABLE_NAME"].ToString()
-                        .Replace("$", "")
-                        .RegexReplace("(^'|'$)", "")
-                        .Replace("''", "'")
-                    where IsNotBuiltinTable(tableName)
-                    select tableName);
+                if (excelTables != null)
+                {
+                    worksheetNames.AddRange(
+                        from DataRow row in excelTables.Rows
+                        where IsTable(row)
+                        let tableName = row["TABLE_NAME"].ToString()
+                            .Replace("$", "")
+                            .RegexReplace("(^'|'$)", "")
+                            .Replace("''", "'")
+                        where IsNotBuiltinTable(tableName)
+                        select tableName);
 
-                excelTables.Dispose();
+                    excelTables.Dispose();
+                }
             }
             finally
             {
                 if (!args.UsePersistentConnection)
+                {
                     conn.Dispose();
+                }
             }
 			
             return worksheetNames;
@@ -152,18 +154,22 @@ namespace LinqToExcel.Query
 
         internal static IEnumerable<string> GetColumnNames(string worksheetName, string fileName)
         {
-            var args = new ExcelQueryArgs();
-            args.WorksheetName = worksheetName;
-            args.FileName = fileName;
+            var args = new ExcelQueryArgs
+            {
+                WorksheetName = worksheetName,
+                FileName = fileName
+            };
             return GetColumnNames(args);
         }
 
         internal static IEnumerable<string> GetColumnNames(string worksheetName, string namedRange, string fileName)
         {
-            var args = new ExcelQueryArgs();
-            args.WorksheetName = worksheetName;
-            args.NamedRangeName = namedRange;
-            args.FileName = fileName;
+            var args = new ExcelQueryArgs
+            {
+                WorksheetName = worksheetName,
+                NamedRangeName = namedRange,
+                FileName = fileName
+            };
             return GetColumnNames(args);
         }
 
@@ -174,11 +180,17 @@ namespace LinqToExcel.Query
             try
             {
                 if (conn.State == ConnectionState.Closed)
+                {
                     conn.Open();
+                }
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = string.Format("SELECT TOP 1 * FROM [{0}{1}]", string.Format("{0}{1}", args.WorksheetName, "$"), args.NamedRangeName);
+                    // ReSharper disable UseStringInterpolation
+                    command.CommandText = string.Format( "SELECT TOP 1 * FROM [{0}{1}]", string.Format("{0}{1}", args.WorksheetName, "$"), args.NamedRangeName);
+                    // ReSharper restore UseStringInterpolation
+
+
                     var data = command.ExecuteReader();
                     columns.AddRange(GetColumnNames(data));
                 }
@@ -186,7 +198,9 @@ namespace LinqToExcel.Query
             finally
             {
                 if (!args.UsePersistentConnection)
+                {
                     conn.Dispose();
+                }
             }
 
             return columns;
@@ -196,8 +210,13 @@ namespace LinqToExcel.Query
         {
             var columns = new List<string>();
             var sheetSchema = data.GetSchemaTable();
-            foreach (DataRow row in sheetSchema.Rows)
-                columns.Add(row["ColumnName"].ToString());
+            if (sheetSchema != null)
+            {
+                foreach (DataRow row in sheetSchema.Rows)
+                {
+                    columns.Add(row["ColumnName"].ToString());
+                }
+            }
 
             return columns;
         }
@@ -245,27 +264,34 @@ namespace LinqToExcel.Query
             try
             {
                 if (conn.State == ConnectionState.Closed)
+                {
                     conn.Open();
+                }
 
                 var excelTables = conn.GetOleDbSchemaTable(
                     OleDbSchemaGuid.Tables,
-                    new Object[] { null, null, null, "TABLE" });
+                    new object[] { null, null, null, "TABLE" });
 
-                namedRanges.AddRange(
-                    from DataRow row in excelTables.Rows
-                    where IsNamedRange(row)
-                    && (!string.IsNullOrEmpty(args.WorksheetName) ? row["TABLE_NAME"].ToString().StartsWith(args.WorksheetName) : !IsWorkseetScopedNamedRange(row))
-                    let tableName = row["TABLE_NAME"].ToString()
-                        .Replace("''", "'")
-                    where IsNotBuiltinTable(tableName)
-                    select tableName.Split('$').Last());
+                if (excelTables != null)
+                {
+                    namedRanges.AddRange(
+                        from DataRow row in excelTables.Rows
+                        where IsNamedRange(row)
+                        && (!string.IsNullOrEmpty(args.WorksheetName) ? row["TABLE_NAME"].ToString().StartsWith(args.WorksheetName) : !IsWorkseetScopedNamedRange(row))
+                        let tableName = row["TABLE_NAME"].ToString()
+                            .Replace("''", "'")
+                        where IsNotBuiltinTable(tableName)
+                        select tableName.Split('$').Last());
 
-                excelTables.Dispose();
+                    excelTables.Dispose();
+                }
             }
             finally
             {
                 if (!args.UsePersistentConnection)
+                {
                     conn.Dispose();
+                }
             }
 
             return namedRanges;

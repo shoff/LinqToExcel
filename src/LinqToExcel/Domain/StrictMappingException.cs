@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LinqToExcel.Domain
+﻿namespace LinqToExcel.Domain
 {
-    public class StrictMappingException : Exception
+    using System;
+
+    [Serializable]
+    public sealed class StrictMappingException : ApplicationException
     {
         public StrictMappingException(string message)
             : base(message)
-        { }
+        {
+        }
 
         public StrictMappingException(string formatMessage, params object[] args)
             : base(string.Format(formatMessage, args))
-        { }
+        {
+        }
     }
 }

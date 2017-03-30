@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace LinqToExcel
+﻿namespace LinqToExcel.Domain
 {
+    using System;
+
     /// <summary>
     /// Represents a cell and its value in an excel spreadsheet
     /// </summary>
@@ -15,7 +15,7 @@ namespace LinqToExcel
         /// <param name="value">Cell's value</param>
         public Cell(object value)
         {
-            Value = value;
+            this.Value = value;
         }
 
         /// <summary>
@@ -24,9 +24,9 @@ namespace LinqToExcel
         /// <typeparam name="T">Object type to convert to</typeparam>
         public T Cast<T>()
         {
-            return (Value == null || Value is DBNull) ?
+            return (this.Value == null || this.Value is DBNull) ?
                 default(T) :
-                (T)Convert.ChangeType(Value, typeof(T));
+                (T)Convert.ChangeType(this.Value, typeof(T));
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace LinqToExcel
         /// </summary>
         public override string ToString()
         {
-            return Value.ToString();
+            return this.Value.ToString();
         }
 
         /// <summary>

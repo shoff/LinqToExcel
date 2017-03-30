@@ -1,8 +1,11 @@
 ﻿namespace LinqToExcel.Query
 {
+    using System;
+
     /// <summary>
     /// Indicates how to treat leading and trailing spaces in string values.
     /// </summary>
+    [Serializable]
     public enum TrimSpacesType
     {
         /// <summary>

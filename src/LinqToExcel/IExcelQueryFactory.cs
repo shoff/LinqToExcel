@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.OleDb;
 using System.Linq.Expressions;
 using LinqToExcel.Query;
 using System.Collections.Generic;

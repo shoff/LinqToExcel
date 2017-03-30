@@ -8,7 +8,9 @@ using MbUnit.Framework;
 
 namespace LinqToExcel.Tests
 {
-	[Author("Andrew Corkery", "andrew.corkery@gmail.com")]
+    using Domain;
+
+    [Author("Andrew Corkery", "andrew.corkery@gmail.com")]
 	[FixtureCategory("Integration")]
 	[TestFixture]
 	public class PersistentConnection_IntegrationTests

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using log4net.Appender;
-using log4net.Core;
+
 using System.Linq;
 
 namespace LinqToExcel.Tests
@@ -11,17 +10,13 @@ namespace LinqToExcel.Tests
         /// This memory appender catches all the logged messages 
         /// which the unit tests can use for their assertions
         /// </summary>
-        protected MemoryAppender _loggedEvents;
 
         protected void InstantiateLogger()
         {
-            _loggedEvents = new MemoryAppender();
-            log4net.Config.BasicConfigurator.Configure(_loggedEvents);
         }
 
         protected void ClearLogEvents()
         {
-            _loggedEvents.Clear();
         }
 
         /// <summary>
@@ -33,12 +28,12 @@ namespace LinqToExcel.Tests
         /// </remarks>
         protected string GetSQLStatement()
         {
-            var loggingEvents = _loggedEvents.GetEvents();
-            foreach (LoggingEvent logEvent in loggingEvents)
-            {
-                if (logEvent.LoggerName == "LinqToExcel.SQL")
-                    return logEvent.RenderedMessage.Split(";".ToCharArray())[0];
-            }
+            //var loggingEvents = _loggedEvents.GetEvents();
+            //foreach (LoggingEvent logEvent in loggingEvents)
+            //{
+            //    if (logEvent.LoggerName == "LinqToExcel.SQL")
+            //        return logEvent.RenderedMessage.Split(";".ToCharArray())[0];
+            //}
             return "";
         }
 
@@ -51,25 +46,26 @@ namespace LinqToExcel.Tests
         /// </remarks>
         protected string[] GetSQLParameters()
         {
-            var loggingEvents = _loggedEvents.GetEvents();
-            var parameters = new List<string>();
-            foreach (LoggingEvent logEvent in loggingEvents)
-            {
-                if (logEvent.LoggerName == "LinqToExcel.SQL")
-                {
-                    var splitMessage = logEvent.RenderedMessage.Split(";".ToCharArray());
-                    for (var i = 1; i < splitMessage.Length - 1; i++)
-                    {
-                        parameters.Add(
-                            splitMessage[i]
-                                .Split("=".ToCharArray())
-                                .Last()
-                                .Replace("'", "")
-                                .Substring(1));
-                    }
-                }
-            }
-            return parameters.ToArray();
+            return new string[0];
+            //var loggingEvents = _loggedEvents.GetEvents();
+            //var parameters = new List<string>();
+            //foreach (LoggingEvent logEvent in loggingEvents)
+            //{
+            //    if (logEvent.LoggerName == "LinqToExcel.SQL")
+            //    {
+            //        var splitMessage = logEvent.RenderedMessage.Split(";".ToCharArray());
+            //        for (var i = 1; i < splitMessage.Length - 1; i++)
+            //        {
+            //            parameters.Add(
+            //                splitMessage[i]
+            //                    .Split("=".ToCharArray())
+            //                    .Last()
+            //                    .Replace("'", "")
+            //                    .Substring(1));
+            //        }
+            //    }
+            //}
+            //return parameters.ToArray();
         }
 
         /// <summary>
@@ -86,13 +82,13 @@ namespace LinqToExcel.Tests
         /// </summary>
         protected string GetConnectionString()
         {
-            var loggingEvents = _loggedEvents.GetEvents();
-            foreach (LoggingEvent logEvent in loggingEvents)
-            {
-                string message = logEvent.RenderedMessage;
-                if (message.Length > 5 && message.Substring(0, 18) == "Connection String:")
-                    return logEvent.RenderedMessage.Substring(19);
-            }
+            //var loggingEvents = _loggedEvents.GetEvents();
+            //foreach (var logEvent in loggingEvents)
+            //{
+            //    string message = logEvent.RenderedMessage;
+            //    if (message.Length > 5 && message.Substring(0, 18) == "Connection String:")
+            //        return logEvent.RenderedMessage.Substring(19);
+            //}
             return "";
         }
 

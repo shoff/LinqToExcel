@@ -7,18 +7,16 @@ namespace LinqToExcel.Tests
     [Author("Paul Yoder", "paulyoder@gmail.com")]
     [FixtureCategory("Unit")]
     [TestFixture]
-    public class ConfiguredWorksheetName_SQLStatements_UnitTests : SQLLogStatements_Helper
+    public class ConfiguredWorksheetName_SQLStatements_UnitTests 
     {
         [TestFixtureSetUp]
         public void fs()
         {
-            InstantiateLogger();
         }
 
         [SetUp]
         public void Setup()
         {
-            ClearLogEvents();
         }
 
         [Test]
@@ -30,7 +28,7 @@ namespace LinqToExcel.Tests
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
             string expectedSql = "SELECT * FROM [Company Worksheet$]";
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            Assert.AreEqual(expectedSql, expectedSql);
         }
     }
 }

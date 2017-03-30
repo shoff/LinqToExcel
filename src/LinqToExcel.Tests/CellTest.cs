@@ -3,8 +3,8 @@ using MbUnit.Framework;
 
 namespace LinqToExcel.Tests
 {
-    [Author("Paul Yoder", "paulyoder@gmail.com")]
-    [TestCategory("Unit")]
+    using Domain;
+
     [TestFixture]
     public class CellTest
     {

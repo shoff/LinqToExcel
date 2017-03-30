@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LinqToExcel.Domain
+﻿namespace LinqToExcel.Domain
 {
+    using System;
+
+    [Serializable]
     public enum DatabaseEngine
     {
-        Jet,
+        Jet = 0,
         Ace
     }
 }

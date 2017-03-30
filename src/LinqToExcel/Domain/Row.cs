@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using LinqToExcel.Extensions;
-
-namespace LinqToExcel
+﻿namespace LinqToExcel.Domain
 {
+    using System;
+    using System.Collections.Generic;
+    using Extensions;
+
     public class Row : List<Cell>
     {
-        IDictionary<string, int> _columnIndexMapping;
+       private readonly IDictionary<string, int> columnIndexMapping;
 
         public Row() : 
             this(new List<Cell>(),new Dictionary<string, int>())
@@ -17,8 +17,10 @@ namespace LinqToExcel
         public Row(IList<Cell> cells, IDictionary<string, int> columnIndexMapping)
         {
             for (int i = 0; i < cells.Count; i++)
+            {
                 this.Insert(i, cells[i]);
-            _columnIndexMapping = columnIndexMapping;
+            }
+            this.columnIndexMapping = columnIndexMapping;
         }
 
         /// <param name="columnName">Column Name</param>
@@ -26,19 +28,21 @@ namespace LinqToExcel
         {
             get 
             {
-                if (!_columnIndexMapping.ContainsKey(columnName))
+                if (!this.columnIndexMapping.ContainsKey(columnName))
+                {
+                    // ReSharper disable UseStringInterpolation
                     throw new ArgumentException(string.Format("'{0}' column name does not exist. Valid column names are '{1}'", 
-                        columnName, string.Join("', '", _columnIndexMapping.Keys.ToArray())));
-                return base[_columnIndexMapping[columnName]]; 
+                        columnName, string.Join("', '", this.columnIndexMapping.Keys.ToArray())));
+                    // ReSharper restore UseStringInterpolation
+
+                }
+                return base[this.columnIndexMapping[columnName]]; 
             }
         }
 
         /// <summary>
         /// List of column names in the row object
         /// </summary>
-        public IEnumerable<string> ColumnNames
-        {
-            get { return _columnIndexMapping.Keys; }
-        }
+        public IEnumerable<string> ColumnNames => this.columnIndexMapping.Keys;
     }
 }

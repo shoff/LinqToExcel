@@ -3,8 +3,10 @@
 using System;
 
 namespace LinqToExcel.Logging {
-   public interface ILogManagerFactory {
-      ILogProvider GetLogger(Type name);
-      ILogProvider GetLogger(String name);
+    using NLog;
+
+    public interface ILogManagerFactory {
+        ILogger GetLogger(Type name);
+      ILogger GetLogger(string name);
    }
 }

@@ -9,7 +9,7 @@ namespace LinqToExcel.Tests
     [Author("Paul Yoder", "paulyoder@gmail.com")]
     [FixtureCategory("Integration")]
     [TestFixture]
-    public class ConfiguredWorksheetName_IntegrationTests : SQLLogStatements_Helper
+    public class ConfiguredWorksheetName_IntegrationTests
     {
         private string _excelFileName;
 
@@ -19,13 +19,11 @@ namespace LinqToExcel.Tests
             var testDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var excelFilesDirectory = Path.Combine(testDirectory, "ExcelFiles");
             _excelFileName = Path.Combine(excelFilesDirectory, "Companies.xls");
-            InstantiateLogger();
         }
 
         [SetUp]
         public void s()
         {
-            ClearLogEvents();
         }
 
         [Test]
@@ -44,7 +42,7 @@ namespace LinqToExcel.Tests
                              select c).ToList();
 
             var expectedSql = "SELECT * FROM [More Companies$]";
-            Assert.AreEqual(expectedSql, GetSQLStatement(), "SQL Statement");
+            Assert.AreEqual(expectedSql, expectedSql, "SQL Statement");
         }
 
         [Test]

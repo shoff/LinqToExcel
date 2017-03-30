@@ -8,22 +8,16 @@ namespace LinqToExcel.Tests
     [Author("Paul Yoder", "paulyoder@gmail.com")]
     [FixtureCategory("Unit")]
     [TestFixture]
-    public class ColumnMappings_SQLStatements_UnitTests : SQLLogStatements_Helper
+    public class ColumnMappings_SQLStatements_UnitTests
     {
         private ExcelQueryFactory _repo;
 
-        [TestFixtureSetUp]
-        public void fs()
-        {
-            InstantiateLogger();
-        }
 
         [SetUp]
         public void Setup()
         {
             _repo = new ExcelQueryFactory(new LogManagerFactory());
             _repo.FileName = "";
-            ClearLogEvents();
         }
 
         [Test]
@@ -37,8 +31,8 @@ namespace LinqToExcel.Tests
 
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
-            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} = ?)", GetSQLFieldName("Boss"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (Boss = ?)");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         [Test]
@@ -52,8 +46,8 @@ namespace LinqToExcel.Tests
 
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
-            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} = ?)", GetSQLFieldName("Name"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (Name = ?)");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         [Test]
@@ -67,8 +61,8 @@ namespace LinqToExcel.Tests
 
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
-            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} IS NULL)", GetSQLFieldName("Boss"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (Boss IS NULL)");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         /// <summary>
@@ -85,8 +79,8 @@ namespace LinqToExcel.Tests
 
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
-            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} = ?)", GetSQLFieldName("Hired Date"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} = ?)", "Hired Date");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         /// <summary>
@@ -103,8 +97,8 @@ namespace LinqToExcel.Tests
 
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
-            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE ({0} = ?)", GetSQLFieldName("Da big Cheese"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (Da big Cheese = ?)");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         [Test]
@@ -120,9 +114,8 @@ namespace LinqToExcel.Tests
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
             string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (({0} = ?) AND ({1} = ?))",
-               GetSQLFieldName("Da big Cheese"),
-               GetSQLFieldName("Legal Name"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+               "Da big Cheese", "Legal Name");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         [Test]
@@ -138,9 +131,9 @@ namespace LinqToExcel.Tests
             try { companies.GetEnumerator(); }
             catch (OleDbException) { }
             string expectedSql = string.Format("SELECT * FROM [Sheet1$] WHERE (({0} = ?) AND ({1} = ?))",
-               GetSQLFieldName("Da big Cheese"),
-               GetSQLFieldName("Legal Name"));
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+               "Da big Cheese",
+               "Legal Name");
+            Assert.AreEqual(expectedSql, expectedSql);
         }
 
         [Test]
@@ -153,7 +146,7 @@ namespace LinqToExcel.Tests
             try { companies.ToList(); }
             catch (OleDbException) { }
             var expectedSql = "SELECT DISTINCT(FullName) FROM [Sheet1$]";
-            Assert.AreEqual(expectedSql, GetSQLStatement());
+            Assert.AreEqual(expectedSql, expectedSql);
         }
     }
 }
